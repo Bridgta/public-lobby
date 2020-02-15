@@ -1,6 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+
 dotenv.config();
 
 //route import
@@ -19,6 +23,11 @@ mongoose
 mongoose.connection.on("error", err => {
     console.log(`DB connection error: ${err.message}`);
 });
+
+//moggan middleware
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 //routes
 app.use("/api", userRoutes);
