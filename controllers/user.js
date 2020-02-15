@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const { errorHandler } = require("../helpers/dbErrorHandler");
 
 exports.register = (req, res) => {
     console.log("req.body", req.body);
@@ -6,7 +7,7 @@ exports.register = (req, res) => {
     user.save((err, user) => {
         if (err) {
             return res.status(400).json({
-                error
+                err: errorHandler(err)
             });
         }
         res.json({
