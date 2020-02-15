@@ -1,0 +1,16 @@
+{
+    "name": "public-lobby",
+    "version": "1.0.0",
+    "description": "A site for democratic lobbying",
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon server.js"
+    },
+    "author": "Bridget Asser",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "nodemon": "^2.0.2"
+    }
+}
