@@ -7,7 +7,8 @@ const {
     view,
     remove,
     update,
-    list
+    list,
+    listRelated
 } = require("../controllers/project");
 const { requireLogin, isAuth, isAdmin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");

@@ -121,7 +121,7 @@ exports.update = (req, res) => {
 };
 
 exports.list = (req, res) => {
-    let donate = req.query.order ? req.query.order : "asc";
+    let donate = req.query.donate ? req.query.donate : "asc";
     let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
     let limit = req.query.limit ? parseInt(req.query.limit) : 6;
 
@@ -134,6 +134,22 @@ exports.list = (req, res) => {
             if (err) {
                 return res.status(400).json({
                     error: "Project not found"
+                });
+            }
+            res.json(projects);
+        });
+};
+
+exports.listRelated = (req, res) => {
+    let limit = req.query.limit ? parseInt(req.query.limit) : 6;
+
+    Project.find({ _id: { $ne: req.project }, category: req.project.category })
+        .limit(limit)
+        .populate("category", "_id name")
+        .exec((err, project) => {
+            if (err) {
+                return res.status(400).json({
+                    error: "Projects not found"
                 });
             }
             res.json(projects);
