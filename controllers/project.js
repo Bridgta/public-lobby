@@ -4,6 +4,25 @@ const fs = require("fs");
 const Project = require("../models/project");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
+exports.projectById = (req, res, next, id) => {
+    Project.findById(id)
+        .populate("category")
+        .exec((err, project) => {
+            if (err || !project) {
+                return res.status(400).json({
+                    error: "Project not found"
+                });
+            }
+            req.project = project;
+            next();
+        });
+};
+
+exports.view = (req, res) => {
+    req.project.photo = undefined;
+    return res.json(req.project);
+};
+
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
