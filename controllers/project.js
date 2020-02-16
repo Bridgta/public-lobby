@@ -71,3 +71,55 @@ exports.create = (req, res) => {
         });
     });
 };
+
+exports.remove = (req, res) => {
+    let project = req.project;
+    project.remove((err, deletedProject) => {
+        if (err) {
+            return res.status(400).json({
+                error: errorHandler(err)
+            });
+        }
+        res.json({
+            message: "Project deleted successfully"
+        });
+    });
+};
+
+exports.update = (req, res) => {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            return res.status(400).json({
+                error: "Image could not be uploaded"
+            });
+        }
+
+        let project = req.project;
+        project = _.extend(project, fields);
+
+        // 1kb = 1000
+        // 1mb = 1000000
+
+        if (files.photo) {
+            // console.log("FILES PHOTO: ", files.photo);
+            if (files.photo.size > 1000000) {
+                return res.status(400).json({
+                    error: "Image should be less than 1mb in size"
+                });
+            }
+            project.photo.data = fs.readFileSync(files.photo.path);
+            project.photo.contentType = files.photo.type;
+        }
+
+        project.save((err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                });
+            }
+            res.json(result);
+        });
+    });
+};
