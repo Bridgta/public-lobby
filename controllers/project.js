@@ -155,3 +155,61 @@ exports.listRelated = (req, res) => {
             res.json(projects);
         });
 };
+
+exports.listCategories = (req, res) => {
+    Project.distinct("category", {}, (err, categories) => {
+        if (err) {
+            return res.status(400).json({
+                error: "ot found"
+            });
+        }
+        res.json(categories);
+    });
+};
+
+exports.listBySearch = (req, res) => {
+    let donate = req.body.donate ? req.body.donate : "desc";
+    let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
+    let limit = req.body.limit ? parseInt(req.body.limit) : 100;
+    let skip = parseInt(req.body.skip);
+    let findArgs = {};
+
+    for (let key in req.body.filters) {
+        if (req.body.filters[key].length > 0) {
+            if (key === "amountNeeded") {
+                findArgs[key] = {
+                    $gte: req.body.filters[key][0],
+                    $lte: req.body.filters[key][1]
+                };
+            } else {
+                findArgs[key] = req.body.filters[key];
+            }
+        }
+    }
+
+    Project.find(findArgs)
+        .select("-photo")
+        .populate("category")
+        .sort([[sortBy, donate]])
+        .skip(skip)
+        .limit(limit)
+        .exec((err, data) => {
+            if (err) {
+                return res.status(400).json({
+                    error: "Project not found"
+                });
+            }
+            res.json({
+                size: data.length,
+                data
+            });
+        });
+};
+
+exports.photo = (req, res, next) => {
+    if (req.project.photo.data) {
+        res.set("Content-Type", req.project.photo.contentType);
+        return res.send(req.project.photo.data);
+    }
+    next();
+};

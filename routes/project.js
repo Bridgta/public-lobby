@@ -8,7 +8,10 @@ const {
     remove,
     update,
     list,
-    listRelated
+    listRelated,
+    listCategories,
+    listBySearch,
+    photo
 } = require("../controllers/project");
 const { requireLogin, isAuth, isAdmin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");
@@ -31,7 +34,9 @@ router.put(
 );
 
 router.get("/projects", list);
-router.get("/products/related/:productId", listRelated);
+router.get("/projects/related/:projectId", listRelated);
+router.post("/project/by/search", listBySearch);
+router.get("/project/photo/:projectId", photo);
 
 router.param("userId", userById);
 router.param("projectId", projectById);
