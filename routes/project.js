@@ -6,7 +6,8 @@ const {
     projectById,
     view,
     remove,
-    update
+    update,
+    list
 } = require("../controllers/project");
 const { requireLogin, isAuth, isAdmin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");
@@ -27,6 +28,9 @@ router.put(
     isAdmin,
     update
 );
+
+router.get("/projects", list);
+router.get("/products/related/:productId", listRelated);
 
 router.param("userId", userById);
 router.param("projectId", projectById);
