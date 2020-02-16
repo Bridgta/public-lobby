@@ -50,19 +50,19 @@ exports.create = (req, res) => {
                 error: "All fields are required"
             });
         }
-        let product = new Project(fields);
+        let project = new Project(fields);
         if (files.photo) {
             if (files.photo.size > 1000000) {
                 return res.status(400).json({
                     error: "Image should be less than 1mb in size"
                 });
             }
-            product.photo.data = fs.readFileSync(files.photo.path);
-            product.photo.contentType = files.photo.type;
+            Project.photo.data = fs.readFileSync(files.photo.path);
+            project.photo.contentType = files.photo.type;
         }
-        product.save((err, result) => {
+        project.save((err, result) => {
             if (err) {
-                console.log("PRODUCT CREATE ERROR ", err);
+                console.log("P CREATE ERROR ", err);
                 return res.status(400).json({
                     error: errorHandler(err)
                 });
@@ -130,7 +130,7 @@ exports.list = (req, res) => {
         .populate("category")
         .sort([[sortBy, donate]])
         .limit(limit)
-        .exec((err, products) => {
+        .exec((err, project) => {
             if (err) {
                 return res.status(400).json({
                     error: "Project not found"
