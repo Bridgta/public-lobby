@@ -19,6 +19,10 @@ const projectSchema = new mongoose.Schema(
             required: true,
             maxlength: 32
         },
+        raised: {
+            type: Number,
+            default: 0
+        },
         category: {
             type: ObjectId,
             ref: "Category",
