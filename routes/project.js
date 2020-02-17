@@ -11,7 +11,8 @@ const {
     listRelated,
     listCategories,
     listBySearch,
-    photo
+    photo,
+    listSearch
 } = require("../controllers/project");
 const { requireLogin, isAuth, isAdmin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");

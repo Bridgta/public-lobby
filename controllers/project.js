@@ -32,37 +32,16 @@ exports.create = (req, res) => {
                 error: "Image could not be uploaded"
             });
         }
-        const {
-            title,
-            description,
-            amountNeeded,
-            category,
-            goalReached
-        } = fields;
-        if (
-            !title ||
-            !description ||
-            !amountNeeded ||
-            !category ||
-            !goalReached
-        ) {
-            return res.status(400).json({
-                error: "All fields are required"
-            });
-        }
+
         let project = new Project(fields);
+
         if (files.photo) {
-            if (files.photo.size > 1000000) {
-                return res.status(400).json({
-                    error: "Image should be less than 1mb in size"
-                });
-            }
-            Project.photo.data = fs.readFileSync(files.photo.path);
+            project.photo.data = fs.readFileSync(files.photo.path);
             project.photo.contentType = files.photo.type;
         }
+
         project.save((err, result) => {
             if (err) {
-                console.log("P CREATE ERROR ", err);
                 return res.status(400).json({
                     error: errorHandler(err)
                 });

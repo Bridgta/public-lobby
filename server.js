@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const formidable = require("formidable");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
@@ -17,9 +18,10 @@ const projectRoutes = require("./routes/project");
 
 //app
 const app = express();
+
 //db connection
 mongoose
-    .connect(process.env.MONGO_URI, {
+    .connect(process.env.DATABASE, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })

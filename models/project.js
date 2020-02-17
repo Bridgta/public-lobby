@@ -6,7 +6,8 @@ const projectSchema = new mongoose.Schema(
         title: {
             type: String,
             trim: true,
-            required: true
+            required: true,
+            maxlength: 32
         },
         description: {
             type: String,
@@ -19,20 +20,19 @@ const projectSchema = new mongoose.Schema(
             required: true,
             maxlength: 32
         },
-        raised: {
-            type: Number,
-            default: 0
-        },
         category: {
             type: ObjectId,
             ref: "Category",
             required: true
         },
+        goalReached: {
+            type: Number
+        },
         photo: {
             data: Buffer,
             contentType: String
         },
-        goalReached: {
+        tax: {
             required: false,
             type: Boolean
         }
