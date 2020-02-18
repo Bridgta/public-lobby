@@ -14,7 +14,7 @@ const projectSchema = new mongoose.Schema(
             required: true,
             maxlength: 2000
         },
-        amountNeeded: {
+        price: {
             type: Number,
             trim: true,
             required: true,
@@ -27,6 +27,10 @@ const projectSchema = new mongoose.Schema(
         },
         goalReached: {
             type: Number
+        },
+        donated: {
+            type: Number,
+            default: 0
         },
         photo: {
             data: Buffer,

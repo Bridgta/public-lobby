@@ -33,9 +33,36 @@ exports.create = (req, res) => {
             });
         }
 
+        // const {
+        //     title,
+        //     description,
+        //     price,
+        //     category,
+        //     goalReached,
+        //     tax
+        // } = fields;
+
+        // if (
+        //     !title ||
+        //     !description ||
+        //     !price ||
+        //     !category ||
+        //     !goalReached ||
+        //     !tax
+        // ) {
+        //     return res.status(400).json({
+        //         error: "All fields are required"
+        //     });
+        // }
+
         let project = new Project(fields);
 
         if (files.photo) {
+            if (files.photo.size > 1000000) {
+                return res.status(400).json({
+                    error: "Image should be less than 1mb in size"
+                });
+            }
             project.photo.data = fs.readFileSync(files.photo.path);
             project.photo.contentType = files.photo.type;
         }
@@ -100,14 +127,14 @@ exports.update = (req, res) => {
 };
 
 exports.list = (req, res) => {
-    let donate = req.query.donate ? req.query.donate : "asc";
+    let order = req.query.order ? req.query.order : "asc";
     let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
     let limit = req.query.limit ? parseInt(req.query.limit) : 6;
 
     Project.find()
         .select("-photo")
         .populate("category")
-        .sort([[sortBy, donate]])
+        .sort([[sortBy, order]])
         .limit(limit)
         .exec((err, project) => {
             if (err) {
@@ -115,7 +142,7 @@ exports.list = (req, res) => {
                     error: "Project not found"
                 });
             }
-            res.json(projects);
+            res.json(project);
         });
 };
 
@@ -131,7 +158,7 @@ exports.listRelated = (req, res) => {
                     error: "Projects not found"
                 });
             }
-            res.json(projects);
+            res.json(project);
         });
 };
 
@@ -147,7 +174,7 @@ exports.listCategories = (req, res) => {
 };
 
 exports.listBySearch = (req, res) => {
-    let donate = req.body.donate ? req.body.donate : "desc";
+    let order = req.body.order ? req.body.order : "desc";
     let sortBy = req.body.sortBy ? req.body.sortBy : "_id";
     let limit = req.body.limit ? parseInt(req.body.limit) : 100;
     let skip = parseInt(req.body.skip);
@@ -155,7 +182,7 @@ exports.listBySearch = (req, res) => {
 
     for (let key in req.body.filters) {
         if (req.body.filters[key].length > 0) {
-            if (key === "amountNeeded") {
+            if (key === "price") {
                 findArgs[key] = {
                     $gte: req.body.filters[key][0],
                     $lte: req.body.filters[key][1]
@@ -169,7 +196,7 @@ exports.listBySearch = (req, res) => {
     Project.find(findArgs)
         .select("-photo")
         .populate("category")
-        .sort([[sortBy, donate]])
+        .sort([[sortBy, order]])
         .skip(skip)
         .limit(limit)
         .exec((err, data) => {
@@ -191,4 +218,45 @@ exports.photo = (req, res, next) => {
         return res.send(req.project.photo.data);
     }
     next();
+};
+
+exports.listSearch = (req, res) => {
+    const query = {};
+
+    if (req.query.search) {
+        query.name = { $regex: req.query.search, $options: "i" };
+        if (req.query.category && req.query.category != "All") {
+            query.category = req.query.category;
+        }
+        Project.find(query, (err, projects) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                });
+            }
+            res.json(projects);
+        }).select("-photo");
+    }
+};
+
+exports.decreaseQuantity = (req, res, next) => {
+    let bulkOps = req.body.order.project.map(item => {
+        return {
+            updateOne: {
+                filter: { _id: item._id },
+                update: {
+                    $inc: { quantity: -item.count, orderd: +item.count }
+                }
+            }
+        };
+    });
+
+    Project.bulkWrite(bulkOps, {}, (error, projects) => {
+        if (error) {
+            return res.status(400).json({
+                error: "Could not update project"
+            });
+        }
+        next();
+    });
 };

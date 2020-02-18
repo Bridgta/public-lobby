@@ -35,8 +35,9 @@ router.put(
 );
 
 router.get("/projects", list);
+router.get("/projects/search", listSearch);
 router.get("/projects/related/:projectId", listRelated);
-router.post("/project/by/search", listBySearch);
+router.post("/projects/by/search", listBySearch);
 router.get("/project/photo/:projectId", photo);
 
 router.param("userId", userById);
