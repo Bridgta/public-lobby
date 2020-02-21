@@ -17,7 +17,7 @@ router.get("/secret/:userId", requireLogin, isAuth, isAdmin, (req, res) => {
 });
 router.get("/user/:userId", requireLogin, isAuth, view);
 router.put("/user/:userId", requireLogin, isAuth, update);
-router.get("/orders/by/user/:userId", requireLogin, isAuth, purchaseHistory);
+
 router.param("userId", userById);
 
 module.exports = router;
