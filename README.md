@@ -9,5 +9,10 @@ A Full Stack MERN Application in which users can contribute to crowd sourced lob
 
 Node.js, Express, MongoDB, React. 
 
-### Product Shots 
+### Take a look at the app
+![Imgur Image](https://i.imgur.com/TIkuZaN.png)
+
+![Imgur Image](https://i.imgur.com/Q4SLyGX.png)
+
+![Imgur Image](https://i.imgur.com/keM2x8G.png)
 
